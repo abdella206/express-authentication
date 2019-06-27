@@ -1,5 +1,6 @@
 const express = require('express');
 const db =require('../models');
+const passport = require('../config/passportCongfig')
 const router = express.Router();
 
 router.get('/signup', function(req, res) {
@@ -17,8 +18,10 @@ router.post('/signup', function(req ,res){
   }).spread(function(user, created){
     if(created){
       console.log('user was created, not found')
-      res.redirect('/');
-    } else{
+      passport.authenticate('local', {
+        successRedirect: '/'
+      })(req, res);
+      } else{
       console.log("email already exists");
       res.redirect('/auth/signup');
     }
@@ -34,5 +37,20 @@ router.post('/signup', function(req ,res){
 router.get('/login', function(req, res) {
   res.render('auth/login');
 });
+
+router.post('/login', passport.authenticate('local',{
+  successRedirect: '/',
+  failureRedirect: '/auth/login'
+}));
+
+
+router.get('/logout', function(req, res) {
+  req.logout();
+  console.log('logged out');
+  res.redirect('/');
+});
+
+
+
 
 module.exports = router;

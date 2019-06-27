@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const ejsLayouts = require('express-ejs-layouts');
 const session = require('express-session');
+const passport = require('./config/passportCongfig')
+
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -17,6 +19,10 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
+
+// Link passport to the express session
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/', function(req, res) {
   res.render('index');
